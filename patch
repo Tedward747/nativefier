@@ -1,0 +1,23 @@
+From ade655b946d239b7b44c1d6bba6eb77968c260c2 Mon Sep 17 00:00:00 2001
+From: Tedward747
+Date: Wed, 2 Mar 2022 23:56:52 -0700
+Subject: [PATCH] Strip LRM and RLM
+
+On linux if --name isn't provided and is taken from the file name, it's prepended with the control character LRM (https://en.wikipedia.org/wiki/Left-to-right_mark) and I'd assume RLM for anyone who's using that setting. This strips those control characters out of the file name.
+---
+ sanitizeFilename.js | 2 +-
+ 1 file changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/sanitizeFilename.js b/sanitizeFilename.js
+index 4fed09ec8..a867a2e79 100644
+--- a/sanitizeFilename.js
++++ b/sanitizeFilename.js
+@@ -27,7 +27,7 @@ function sanitizeFilename(platform, filenameToSanitize) {
+     let result = sanitize(filenameToSanitize);
+     // spaces will cause problems with Ubuntu when pinned to the dock
+     if (platform === 'linux') {
+-        result = result.replace(/\s/g, '');
++        result = result.replace(/[\s\u200e\u200f]/g, '');
+     }
+     if (!result || result === '') {
+         result = constants_1.DEFAULT_APP_NAME;
